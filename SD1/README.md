@@ -1,3 +1,7 @@
+## Versijos būsena
+v0.1 dar kuriama. Įgyvendintas rankinis duomenų įvedimas,
+galutinio balo skaičiavimas ir studentų rikiavimas.
+
 # Studentų pažymių skaičiavimo programa
 
 Šią programą kuriu savarankiškam C++ darbui. Ji leidžia įvesti
