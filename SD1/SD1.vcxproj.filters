@@ -36,4 +36,7 @@
   <ItemGroup>
     <None Include="README.md" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="kursiokai.txt" />
+  </ItemGroup>
 </Project>

@@ -11,7 +11,7 @@ Galutinis balas = 0.4 × namų darbų rezultatas + 0.6 × egzaminas.
 
 ## Versijos būsena
 
-v0.1 versija dar kuriama.
+v0.1 versija užbaigta.
 
 ## Atlikti darbai
 
@@ -43,12 +43,10 @@ ar sugeneruoti atsitiktinai. Programa generuoja pažymius
 nuo 1 iki 10. Po kiekvieno sugeneruoto namų darbo pažymio
 galima pasirinkti, ar generuoti dar vieną. Baigus namų darbus,
 egzamino pažymys sugeneruojamas automatiškai.
+Pridėjau duomenų skaitymą iš 'kursiokai.txt'. 
+Nuskaitytus studentus surikiuoju ir pateikiu abu galutinius balus.
+Apdorotju failo atidarymo klaidas naudojant `try` ir `catch`.
 
-## Ką dar reikia padaryti
-
-- Pridėti duomenų skaitymą iš `kursiokai.txt`.
-- Nuskaitytus studentus surikiuoti ir pateikti abu galutinius balus.
-- Apdoroti failo atidarymo klaidas naudojant `try` ir `catch`.
 
 ## Projekto failai
 
@@ -56,19 +54,22 @@ egzamino pažymys sugeneruojamas automatiškai.
 - `Studentas.h` – klasės ir funkcijų deklaracijos.
 - `Studentas.cpp` – klasės metodai ir operatoriai.
 - `studDB.cpp` – pagrindinė programos dalis su `main()` funkcija.
+- 'kursiokai.txt' - duomenų skaitymo failas.
+- 'README.md' - darbo aprašymo failas.
 
 ## Kaip paleisti ir naudotis
 
 1. Atidaryti projektą „Visual Studio“.
 2. Paspausti `Ctrl + F5`.
-3. Įvesti studento vardą ir pavardę.
-4. Pasirinkti, ar pažymius generuoti atsitiktinai:
+3. Pasirinkti ar nuskaityti duomenis iš failo 'kursiokai.txt'
+4. Suvedant duomenis ranka, įvesti studento vardą ir pavardę.
+5. Pasirinkti, ar pažymius generuoti atsitiktinai:
    `t/T` – generuoti, `n/N` – įvesti ranka.
-5. Įvesti arba generuoti namų darbų pažymius.
+6. Įvesti arba generuoti namų darbų pažymius.
    Į klausimą apie kitą pažymį atsakius `n/N`,
    namų darbų įvedimas arba generavimas baigiamas.
-6. Įvesti egzamino pažymį. Pasirinkus generavimą,
+7. Įvesti egzamino pažymį. Pasirinkus generavimą,
    jis sugeneruojamas automatiškai.
-7. Pasirinkti, ar įvesti dar vieną studentą.
+8. Pasirinkti, ar įvesti dar vieną studentą.
    Atsakius `n/N`, pateikiama surikiuota lentelė
    su abiem galutiniais balais.
