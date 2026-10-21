@@ -9,15 +9,14 @@ class studentas {
 
 public:
     studentas(); //konstruktorius defolt
-    explicit studentas(bool ivesti); //konstruktorius su loginiu parametru (explicit neleidžia kompiliatoriui automatiškai paversti bool reikšmės į studentas objektą)
     studentas(std::string v, std::string p, std::vector<int> pazim, int e); //konstruktorius su parametrais
     studentas(const studentas& B); //kopijavimo konstruktorius
     studentas& operator=(const studentas& A); //Kopijavimo priskyrimo operatorius
     ~studentas(); //destruktorius
-
-    double Galutinis(bool mediana) const;
-    void Skaiciuoti(bool mediana);
-    void outputas();
+    //medianos metodas
+    double mediana() const;
+    //vidurkio metodas
+    double vidurkis() const;
     void clear();
     std::string GetVar() const;
     const std::string& GetPav() const;

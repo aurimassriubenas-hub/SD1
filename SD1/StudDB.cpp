@@ -4,14 +4,9 @@
 int main() {
     vector <studentas> grupe;
     //skaičiavimo būdo pasirinkimas
-    char pasirinkimas;
-    cout << "Skaiciuoti pagal mediana? t/n ";
-    cin >> pasirinkimas;
 
-    bool mediana = (pasirinkimas == 't' || pasirinkimas == 'T');
     while (true) {
         studentas A;
-        A.Skaiciuoti(mediana);
         grupe.push_back(A);
         A.clear();
         char uzkl;
@@ -21,17 +16,12 @@ int main() {
     std::sort(grupe.begin(), grupe.end(), vardid);
 
     // PAPILDYTA: lenteles antraste
-    cout << std::left << std::setw(10) << "Vardas"
-        << std::setw(20) << "Pavarde";
+    cout << std::left << std::setw(15) << "Vardas"
+        << std::setw(20) << "Pavarde"
+        << std::right << std::setw(18) << "Galutinis (Med.)"
+        << std::setw(18) << "Galutinis (Vid.)" << "\n";
 
-    if (mediana) {
-        cout << "Galutinis (Med.)\n";
-    }
-    else {
-        cout << "Galutinis (Vid.)\n";
-    }
-
-    cout << "---------------------------------------------\n";
+    cout << "-----------------------------------------------------------------------\n";
 
     for (auto K : grupe)
         cout << K;

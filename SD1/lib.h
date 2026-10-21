@@ -6,6 +6,7 @@
 #include <vector>
 #include <numeric>
 #include <algorithm>
+#include <random>
 
 
 using std::cout;
