@@ -139,11 +139,13 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Failai.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="StudDB.cpp" />
     <ClCompile Include="Studentas.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Failai.h" />
     <ClInclude Include="lib.h" />
     <ClInclude Include="Studentas.h" />
   </ItemGroup>

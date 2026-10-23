@@ -8,7 +8,7 @@
 #include <algorithm>
 #include <random>
 #include <fstream>
-#include <sstream> //eilutės nuskaitymui iš failo
+#include <sstream> ////duomenų išskaidymui iš nuskaitytos eilutės
 #include <stdexcept> //standartiniai išimčių tipai
 
 

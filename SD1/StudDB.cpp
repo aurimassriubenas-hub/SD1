@@ -1,52 +1,85 @@
 #include "lib.h"
 #include "Studentas.h"
+#include "Failai.h"
 
 int main() {
     vector<studentas> grupe;
     char uzkl;
+    string pavadinimas;
+    bool skaitytiFaila = false;
 
-    cout << "Ar duomenis nuskaityti is failo? t/n ";
+    cout << "Ar nori generuoti faila? t/n: ";
     cin >> uzkl;
 
-    if (uzkl == 'n' || uzkl == 'N') {
-        while (true) {
-            studentas A;
-            grupe.push_back(A);
-            A.clear();
+    if (uzkl == 't' || uzkl == 'T') {
+        cout << "Ivesk failo pavadinima be .txt: ";
+        string pavad;
+        cin >> pavad;
 
-            char uzkl;
-            cout << "Ar ivesite dar viena studenta? t/n ";
-            cin >> uzkl;
+        cout << "Kiek studentu faile? ";
+        int n;
 
-            if (uzkl == 'n' || uzkl == 'N') break;
+        if (!(cin >> n) || n <= 0) {
+            cout << "Klaida: reikia teigiamo sveikojo skaiciaus.\n";
+            return 1;
+        }
+
+        pavadinimas = pavad + std::to_string(n) + ".txt";
+
+        try {
+            GeneruotiFaila(pavadinimas, n);
+            cout << "Failas sukurtas.\n";
+        }
+        catch (const std::exception& e) {
+            cout << "Klaida: " << e.what() << "\n";
+            return 1;
+        }
+
+        skaitytiFaila = true;
+    }
+    else {
+        cout << "Ar duomenis nuskaityti is failo? t/n: ";
+        cin >> uzkl;
+
+        if (uzkl == 't' || uzkl == 'T') {
+            cout << "Iveskite failo pavadinima su .txt: ";
+            cin >> pavadinimas;
+            skaitytiFaila = true;
+        }
+        else {
+            while (true) {
+                studentas A;
+                grupe.push_back(A);
+                A.clear();
+
+                cout << "Ar ivesite dar viena studenta? t/n: ";
+                cin >> uzkl;
+
+                if (uzkl == 'n' || uzkl == 'N') break;
+            }
         }
     }
-    // Duomenys nuskaitomi iš failo
-    else {
+
+    // Skaitome sugeneruota arba vartotojo pasirinkta faila
+    if (skaitytiFaila) {
         try {
-            std::ifstream failas("kursiokai.txt");
+            std::ifstream failas(pavadinimas);
 
             if (!failas.is_open()) {
-                //cout << "Nepavyko atidaryti kursiokai.txt\n";
-                //return 1;
-                throw std::runtime_error("Nepavyko atidaryti kursiokai.txt");
+                throw std::runtime_error("Nepavyko atidaryti failo.");
             }
 
-
             string eilute;
+            std::getline(failas, eilute); // Praleidziame antraste
 
-            // Praleidziame antraste
-            std::getline(failas, eilute);
-
-            // Skaitome studentus nuo antros eilutes
             while (std::getline(failas, eilute)) {
                 std::istringstream duomenys(eilute);
 
-                string pavarde, vardas;
+                string vardas, pavarde;
                 vector<int> pazymiai;
                 int pazymys;
 
-                if (!(duomenys >> pavarde >> vardas)) {
+                if (!(duomenys >> vardas >> pavarde)) {
                     continue;
                 }
 
@@ -54,7 +87,6 @@ int main() {
                     pazymiai.push_back(pazymys);
                 }
 
-                // Bent vienas ND ir egzaminas
                 if (pazymiai.size() < 2) {
                     continue;
                 }
@@ -66,13 +98,51 @@ int main() {
                 grupe.push_back(A);
             }
         }
-            catch (const std::exception& e) {
-                cout << "Klaida: " << e.what() << "\n";
-                return 1;
-            }
+        catch (const std::exception& e) {
+            cout << "Klaida: " << e.what() << "\n";
+            return 1;
+        }
     }
 
+   
     std::sort(grupe.begin(), grupe.end(), vardid);
+
+    //suskirstymas į <5 (vargšiukai) ir >=5 (kietiakai)
+
+    vector<studentas> vargsiukai;
+    vector<studentas> kietiakai;
+
+    for (const studentas& A : grupe) {
+        if (A.vidurkis() < 5.0) {
+            vargsiukai.push_back(A);
+        }
+        else {
+            kietiakai.push_back(A);
+        }
+    }
+
+    std::ofstream silpni("vargsiukai.txt");
+    std::ofstream stiprus("kietiakai.txt");
+
+    silpni << left << setw(15) << "Vardas"
+        << setw(23) << "Pavarde"
+        << setw(18) << "Galutinis (Med.)"
+        << setw(18) << "Galutinis (Vid.)" << "\n";
+
+    stiprus << left << setw(15) << "Vardas"
+        << setw(23) << "Pavarde"
+        << setw(18) << "Galutinis (Med.)"
+        << setw(18) << "Galutinis (Vid.)" << "\n";
+
+    for (const studentas& A : vargsiukai) {
+        silpni << A;
+    }
+
+    for (const studentas& A : kietiakai) {
+        stiprus << A;
+    }
+
+    //Išvedimas
 
     cout << std::left << std::setw(15) << "Vardas"
         << std::setw(23) << "Pavarde"
