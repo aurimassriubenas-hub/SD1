@@ -4,6 +4,8 @@
 
 int main() {
     vector<studentas> grupe;
+//  std::list<studentas> grupe;
+//  std::deque<studentas> grupe;
     char uzkl;
     string pavadinimas;
     bool skaitytiFaila = false;
@@ -127,6 +129,9 @@ int main() {
     }
 
    
+//  std::sort(grupe.begin(), grupe.end(), vardid);
+
+//  grupe.sort(vardid);
     std::sort(grupe.begin(), grupe.end(), vardid);
 
     // Skirstome pagal galutini bala, apskaiciuota naudojant ND vidurki:
@@ -134,6 +139,12 @@ int main() {
 
     vector<studentas> vargsiukai;
     vector<studentas> kietiakai;
+
+//  std::list<studentas> vargsiukai;
+//  std::list<studentas> kietiakai;
+
+//  std::deque<studentas> vargsiukai;
+//  std::deque<studentas> kietiakai;
 
     auto skirstymoPradzia = std::chrono::steady_clock::now();
 
@@ -154,11 +165,14 @@ int main() {
         << skirstymoTrukme.count() << " s\n";
 
     // Kiekviena grupe rikiuojama galutinio balo didėjimo tvarka
+
     std::sort(vargsiukai.begin(), vargsiukai.end(),
         [](const studentas& A, const studentas& B) {
             return A.vidurkis() < B.vidurkis();
         });
 
+
+//  kietiakai.sort(
     std::sort(kietiakai.begin(), kietiakai.end(),
         [](const studentas& A, const studentas& B) {
             return A.vidurkis() < B.vidurkis();

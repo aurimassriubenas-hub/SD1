@@ -15,8 +15,9 @@ Galutinis balas = 0,4 × namų darbų rezultatas + 0,6 × egzaminas
 ## Versijų būsena
 
 - `v0.1` – užbaigta ir paskelbtas „Release“.
-- `v0.2` – kuriama. Atlikti bandymai su `std::vector`,
-  dar liko palyginti `std::list` ir `std::deque`.
+- `v0.2` – įgyvendintas failų generavimas, studentų skirstymas
+  ir atlikti `vector`, `list` bei `deque` spartos bandymai.
+  Ruošiamas versijos išleidimas.
 
 ## v0.1 – pagrindinės programos kūrimas
 
@@ -147,6 +148,71 @@ neparodo visos programos veikimo trukmės.
 Kadangi kiekvienam dydžiui atliktas vienas bandymas,
 pateikti rezultatai nėra kelių bandymų vidurkiai.
 
+## Konteinerių spartos palyginimas
+
+Palyginau `std::vector`, `std::list` ir `std::deque`.
+Visiems konteineriams naudojau tuos pačius penkis `bb` failus.
+Namų darbų pažymiai visais atvejais liko `std::vector<int>`.
+
+Studentai kopijuojami į du naujus to paties tipo konteinerius.
+Matuojamas nuskaitymas, skirstymas ir rezultatų išvedimas į
+du failus, įskaitant jų sukūrimą ir uždarymą.
+Papildomas rikiavimas į šias trukmes neįtrauktas.
+
+Kiekvienam dydžiui ir konteineriui atliktas vienas bandymas.
+Visos trukmės pateiktos sekundėmis.
+
+### Duomenų nuskaitymas
+
+|Studentų skaičius |    vector |      list |     deque |
+|-----------------:|----------:|----------:|----------:|
+|            1 000 | 0,0191384 | 0,0271421 | 0,0171263 |
+|           10 000 | 0,0565368 | 0,0565414 | 0,0541053 |
+|          100 000 |  0,589661 |  0,526619 |  0,532605 |
+|        1 000 000 |   5,57201 |   5,38491 |   5,29365 |
+|       10 000 000 |   56,3356 |   54,0342 |   57,3097 |
+
+### Studentų skirstymas į dvi grupes
+
+|Studentų skaičius |    vector |      list |     deque |
+|-----------------:|----------:|----------:|----------:|
+|            1 000 | 0,0008093 | 0,0001838 | 0,0002487 |
+|           10 000 | 0,0046399 | 0,0022611 | 0,0021524 |
+|          100 000 | 0,0452827 | 0,0211822 | 0,0246206 |
+|        1 000 000 |  0,449008 |  0,208876 |  0,270418 |
+|       10 000 000 |   5,25218 |   2,07686 |   2,73662 |
+
+### Rezultatų išvedimas į du failus
+
+| Studentų skaičius |    vector |      list |     deque |
+|------------------:|----------:|----------:|----------:|
+|            1 000  | 0,0620094 |  0,004047 | 0,0589657 |
+|           10 000  | 0,0188019 | 0,0200369 | 0,0190976 |
+|          100 000  |  0,179129 |  0,224802 |  0,191924 |
+|        1 000 000  |   1,80388 |   2,17446 |   2,16213 |
+|       10 000 000  |    39,943 |    37,347 |   35,9548 |
+
+### Palyginimo aptarimas
+
+Didesnių failų nuskaitymo trukmės buvo panašios.
+10 milijonų studentų faile trumpiausiai nuskaitymas užtruko
+naudojant `list` – 54,0342 s.
+
+Skirstant studentus, `list` šiame bandyme buvo greičiausias
+keturiems iš penkių dydžių. Su 10 milijonų studentų skirstymas
+užtruko 2,07686 s, naudojant `deque` – 2,73662 s,
+o `vector` – 5,25218 s.
+
+Išvedimo rezultatai neparodė vieno konteinerio pranašumo
+visiems failų dydžiams. Pavyzdžiui, milijono studentų
+rezultatus greičiausiai išvedė `vector`, o 10 milijonų –
+`deque`.
+
+Mažiausio failo išvedimo trukmės stipriai skyrėsi.
+Kadangi atlikta tik po vieną bandymą, vien iš šių matavimų
+negalima nustatyti skirtumo priežasties ar teigti,
+kad vienas konteineris visais atvejais yra greičiausias.
+
 ## Projekto failai
 
 - `lib.h` – naudojamos bibliotekos ir `using` deklaracijos.
@@ -189,6 +255,22 @@ Tada įvesti failo pavadinimą su `.txt`.
 Dabartiniame skaitymo variante duomenų eilutės tvarka:
 vardas, pavardė, namų darbų pažymiai, egzaminas.
 Pirmoji eilutė skirta antraštei.
+
+### Konteinerio pakeitimas bandymams
+
+Dabartiniame kode naudojamas `std::vector`.
+Norint išbandyti kitą konteinerį, `StudDB.cpp` faile reikia
+pakeisti visų trijų studentų konteinerių – `grupe`,
+`vargsiukai` ir `kietiakai` – tipą.
+
+Naudojant `vector` arba `deque`, rikiuojama su `std::sort`.
+Naudojant `list`, kviečiamas konteinerio metodas `.sort()`.
+
+Namų darbų pažymių konteineris `std::vector<int>` nekeičiamas.
+Pakeitus kodą, programą reikia iš naujo sukompiliuoti.
+
+Palyginimui visais atvejais naudojami tie patys duomenų failai:
+pasirenkama negeneruoti naujo failo ir nuskaityti jau esamą.
 
 ### Duomenų įvedimas ranka
 
