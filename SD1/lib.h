@@ -10,6 +10,7 @@
 #include <fstream>
 #include <sstream> ////duomenų išskaidymui iš nuskaitytos eilutės
 #include <stdexcept> //standartiniai išimčių tipai
+#include <chrono> // Veiksmu trukmes matavimui
 
 
 using std::cout;

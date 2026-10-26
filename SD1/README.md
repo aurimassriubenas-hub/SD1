@@ -3,73 +3,208 @@
 Šią programą kuriu savarankiškam C++ darbui. Ji leidžia įvesti
 studentų vardus, pavardes, namų darbų ir egzamino pažymius.
 Pažymius galima įvesti ranka arba sugeneruoti atsitiktinai.
+Studentų duomenis taip pat galima nuskaityti iš failo.
 
 Programa apskaičiuoja du galutinius balus: vieną pagal namų
 darbų vidurkį, kitą – pagal medianą. Abiem atvejais taikoma formulė:
 
-Galutinis balas = 0.4 × namų darbų rezultatas + 0.6 × egzaminas.
+```text
+Galutinis balas = 0,4 × namų darbų rezultatas + 0,6 × egzaminas
+```
 
-## Versijos būsena
+## Versijų būsena
 
-v0.1 versija užbaigta.
+- `v0.1` – užbaigta ir paskelbtas „Release“.
+- `v0.2` – kuriama. Atlikti bandymai su `std::vector`,
+  dar liko palyginti `std::list` ir `std::deque`.
 
-## Atlikti darbai
+## v0.1 – pagrindinės programos kūrimas
 
 ### Pirmasis etapas
 
-Sukūriau klasę `studentas`, kurioje saugomi studento duomenys.
-Realizavau konstruktorius, kopijavimo konstruktorių, kopijavimo
-priskyrimo operatorių ir destruktorių pagal trijų metodų taisyklę.
-Taip pat pridėjau įvedimo ir išvedimo operatorius.
+Sukūriau klasę `studentas`, kurioje saugomi vieno studento duomenys.
+Realizavau konstruktorius ir trijų metodų taisyklę:
+kopijavimo konstruktorių, kopijavimo priskyrimo operatorių
+ir destruktorių. Taip pat pridėjau įvedimo ir išvedimo operatorius.
 
 Namų darbų pažymiai ir studentai saugomi `std::vector`
-konteineriuose. Pažymių skaičiaus iš anksto nurodyti nereikia –
-vartotojas pats nusprendžia, kada baigti juos įvesti.
+konteineriuose. Namų darbų skaičiaus iš anksto nurodyti nereikia –
+vartotojas pats nusprendžia, kada baigti įvedimą.
 
 Pradiniame variante buvo galima pasirinkti, ar galutinį balą
 skaičiuoti pagal vidurkį, ar medianą. Studentai surikiuojami
-pagal vardą, o rezultatai pateikiami lentelėje dviem skaičiais
+pagal vardą, o galutinis balas pateikiamas dviem skaičiais
 po kablelio.
 
 Kodą suskaidžiau į atskirus `.h` ir `.cpp` failus.
 
 ### Antrasis etapas
 
-Pakeičiau rezultatų išvedimą: dabar vienoje lentelėje rodomi
+Pakeičiau rezultatų išvedimą: vienoje lentelėje pateikiami
 abu galutiniai balai – pagal namų darbų vidurkį ir medianą.
 
 Pridėjau galimybę pasirinkti, ar pažymius įvesti pačiam,
-ar sugeneruoti atsitiktinai. Programa generuoja pažymius
-nuo 1 iki 10. Po kiekvieno sugeneruoto namų darbo pažymio
-galima pasirinkti, ar generuoti dar vieną. Baigus namų darbus,
-egzamino pažymys sugeneruojamas automatiškai.
-Pridėjau duomenų skaitymą iš 'kursiokai.txt'. 
-Nuskaitytus studentus surikiuoju ir pateikiu abu galutinius balus.
-Apdorotju failo atidarymo klaidas naudojant `try` ir `catch`.
+ar sugeneruoti atsitiktinai. Generuojami pažymiai nuo 1 iki 10.
+Po kiekvieno sugeneruoto namų darbo pažymio galima pasirinkti,
+ar generuoti dar vieną. Baigus namų darbus, egzamino pažymys
+sugeneruojamas automatiškai.
 
+### Trečiasis etapas
+
+Pridėjau studentų duomenų skaitymą iš `kursiokai.txt`.
+Pirmoji failo eilutė su antrašte praleidžiama, o iš kitų
+eilučių nuskaitomi studentų duomenys.
+
+Nuskaityti studentai surikiuojami pagal vardą ir pateikiami
+lentelėje su abiem galutiniais balais.
+
+Failo atidarymo klaidoms apdoroti panaudojau `try` ir `catch`.
+Jei failo nepavyksta atidaryti, programa parodo klaidos pranešimą.
+
+## v0.2 – studentų failų generavimas ir skirstymas
+
+Sukūriau funkciją `GeneruotiFaila`, kuri sukuria pasirinkto
+dydžio studentų duomenų failą. Studentų vardai ir pavardės
+sudaromi pridedant eilės numerį, pavyzdžiui,
+`Vardas1 Pavarde1`, `Vardas2 Pavarde2`.
+
+Kiekvienam studentui sugeneruojama 10 namų darbų pažymių
+ir vienas egzamino pažymys. Atsitiktiniams pažymiams gauti
+naudoju `<random>` bibliotekos generatorių `std::mt19937`
+ir `std::uniform_int_distribution<int>`.
+
+Sugeneruotą arba pasirinktą failą programa nuskaito ir
+studentus padalija į dvi grupes pagal galutinį balą,
+apskaičiuotą naudojant namų darbų vidurkį:
+
+- „Vargšiukai“ – galutinis balas < 5.
+- „Kietiakai“ – galutinis balas >= 5.
+
+Grupės įrašomos į `vargsiukai.txt` ir `kietiakai.txt`.
+Kiekviename faile studentai rikiuojami pagal galutinį balą
+didėjimo tvarka. Išvedami abu galutiniai balai,
+tačiau skirstymui naudojamas tik balas pagal vidurkį.
+
+## v0.2 – spartos analizė
+
+Programą testavau „Visual Studio“, naudodamas „Release x64“
+konfigūraciją ir `std::vector` konteinerį.
+
+Sugeneravau penkis failus: 1 000, 10 000, 100 000,
+1 000 000 ir 10 000 000 studentų.
+
+Naudodamas `std::chrono::steady_clock`, atskirai matavau:
+
+- Pradinio duomenų failo kūrimą.
+- Duomenų nuskaitymą ir studentų įrašymą į vektorių.
+- Studentų skirstymą į dvi grupes.
+- Abiejų rezultatų failų sukūrimą, duomenų išvedimą ir uždarymą.
+
+Studentų sąrašo išvedimą į ekraną bandymų metu užkomentavau,
+kad programa nespausdintų milijonų eilučių. Ekrane palikau
+veiksmų trukmes ir studentų skaičius.
+
+### Bandymų rezultatai
+
+Trukmės pateiktos sekundėmis. Kiekvienam failo dydžiui
+atliktas vienas bandymas.
+
+| Studentų skaičius | Failo kūrimas, s | Nuskaitymas, s | Skirstymas, s | Išvedimas į failus, s |
+|------------------:|-----------------:|---------------:|--------------:|----------------------:|
+| 1 000             | 0,0110493        | 0,0057812      | 0,0004072     | 0,0035062             |
+| 10 000            | 0,0394027        | 0,0567575      | 0,0053199     | 0,0264481             |
+| 100 000           | 0,310003         | 0,565864       | 0,0574962     | 0,201865              |
+| 1 000 000         | 3,00092          | 5,50794        | 0,472118      | 1,98755               |
+| 10 000 000        | 29,8997          | 56,6858        | 5,34225       | 21,145                |
+
+### Bandymų kompiuteris
+
+- Procesorius: Intel Core i7-8565U @ 1,80 GHz.
+- Operatyvioji atmintis (RAM): 16 GB.
+- Diskas: Toshiba KBG30ZMS512G, 512 GB NVMe SSD.
+- Operacinė sistema: Windows, 64 bitų.
+- Programos konfigūracija: Release x64.
+
+### Rezultatų aptarimas
+
+Didėjant studentų skaičiui, ilgėjo visų matuojamų veiksmų
+trukmė. Didesniuose bandymuose, įrašų skaičių padidinus
+10 kartų, trukmės taip pat didėjo maždaug 10 kartų.
+
+Iš keturių matuojamų veiksmų didesniems failams daugiausia
+laiko užtruko duomenų nuskaitymas, o mažiausiai –
+studentų skirstymas į dvi grupes.
+
+Bandant 10 milijonų studentų failą, nuskaitymas užtruko
+56,6858 s, o skirstymas – 5,34225 s.
+Į „vargšiukų“ grupę pateko 4 134 190 studentų,
+į „kietiakų“ – 5 865 810. Jų suma yra 10 000 000.
+
+Papildomas rikiavimas pagal vardą ir galutinį balą
+į pateiktas trukmes neįtrauktas, todėl šių laikų suma
+neparodo visos programos veikimo trukmės.
+
+Kadangi kiekvienam dydžiui atliktas vienas bandymas,
+pateikti rezultatai nėra kelių bandymų vidurkiai.
 
 ## Projekto failai
 
 - `lib.h` – naudojamos bibliotekos ir `using` deklaracijos.
-- `Studentas.h` – klasės ir funkcijų deklaracijos.
-- `Studentas.cpp` – klasės metodai ir operatoriai.
-- `studDB.cpp` – pagrindinė programos dalis su `main()` funkcija.
-- 'kursiokai.txt' - duomenų skaitymo failas.
-- 'README.md' - darbo aprašymo failas.
+- `Studentas.h` – studento klasė ir funkcijų deklaracijos.
+- `Studentas.cpp` – klasės metodų ir operatorių realizacija.
+- `StudDB.cpp` – pagrindinė programos dalis su `main()` funkcija.
+- `Failai.h` – failo generavimo funkcijos deklaracija.
+- `Failai.cpp` – failo generavimo funkcijos realizacija.
+- `kursiokai.txt` – pavyzdinis studentų duomenų failas.
+- `README.md` – programos, jos naudojimo ir bandymų aprašymas.
+
+Dideli sugeneruoti duomenų failai į repozitoriją nekeliami.
+Juos galima sukurti paleidus programą.
 
 ## Kaip paleisti ir naudotis
 
 1. Atidaryti projektą „Visual Studio“.
-2. Paspausti `Ctrl + F5`.
-3. Pasirinkti ar nuskaityti duomenis iš failo 'kursiokai.txt'
-4. Suvedant duomenis ranka, įvesti studento vardą ir pavardę.
-5. Pasirinkti, ar pažymius generuoti atsitiktinai:
-   `t/T` – generuoti, `n/N` – įvesti ranka.
-6. Įvesti arba generuoti namų darbų pažymius.
-   Į klausimą apie kitą pažymį atsakius `n/N`,
-   namų darbų įvedimas arba generavimas baigiamas.
-7. Įvesti egzamino pažymį. Pasirinkus generavimą,
-   jis sugeneruojamas automatiškai.
-8. Pasirinkti, ar įvesti dar vieną studentą.
-   Atsakius `n/N`, pateikiama surikiuota lentelė
-   su abiem galutiniais balais.
+2. Pasirinkti „Release“ ir „x64“ konfigūraciją.
+3. Paspausti `Ctrl + F5`.
+
+### Naujo studentų failo generavimas
+
+Į klausimą „Ar nori generuoti failą?“ atsakyti `t`.
+Įvesti failo pavadinimą be `.txt` ir studentų skaičių.
+
+Pavyzdžiui, įvedus `studentai` ir `1000`,
+sukuriamas `studentai1000.txt`.
+
+Programa automatiškai nuskaito sukurtą failą, suskirsto
+studentus ir įrašo rezultatus į `vargsiukai.txt`
+bei `kietiakai.txt`. Ekrane parodomos veiksmų trukmės
+ir abiejų grupių studentų skaičiai.
+
+### Esamo failo nuskaitymas
+
+Į klausimą apie generavimą atsakyti `n`, o į klausimą
+„Ar duomenis nuskaityti iš failo?“ – `t`.
+Tada įvesti failo pavadinimą su `.txt`.
+
+Dabartiniame skaitymo variante duomenų eilutės tvarka:
+vardas, pavardė, namų darbų pažymiai, egzaminas.
+Pirmoji eilutė skirta antraštei.
+
+### Duomenų įvedimas ranka
+
+Į abu pradinius klausimus atsakyti `n`.
+Toliau įvesti studento vardą, pavardę ir pasirinkti,
+ar pažymius įvesti ranka, ar generuoti atsitiktinai.
+
+### Kur rasti failus
+
+Failai kuriami programos darbiniame aplanke. Paleidžiant
+iš „Visual Studio“ su numatytaisiais nustatymais, tai
+paprastai yra projekto aplankas.
+
+Jį galima atidaryti „Solution Explorer“ lange paspaudus
+dešiniuoju pelės mygtuku ant projekto ir pasirinkus
+„Open Folder in File Explorer“.
+
+Kiekvieną kartą paleidus skirstymą, ankstesni
+`vargsiukai.txt` ir `kietiakai.txt` perrašomi.

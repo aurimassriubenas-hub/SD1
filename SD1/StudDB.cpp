@@ -26,10 +26,20 @@ int main() {
 
         pavadinimas = pavad + std::to_string(n) + ".txt";
 
+        //failo generavimo laiko matavimas
+
         try {
+            auto pradzia = std::chrono::steady_clock::now();
+
             GeneruotiFaila(pavadinimas, n);
+
+            auto pabaiga = std::chrono::steady_clock::now();
+            std::chrono::duration<double> trukme = pabaiga - pradzia;
+
             cout << "Failas sukurtas.\n";
+            cout << "Failo kurimas: " << trukme.count() << " s\n";
         }
+
         catch (const std::exception& e) {
             cout << "Klaida: " << e.what() << "\n";
             return 1;
@@ -60,9 +70,11 @@ int main() {
         }
     }
 
-    // Skaitome sugeneruota arba vartotojo pasirinkta faila
+    // Skaitome faila ir matuojame nuskaitymo trukme
     if (skaitytiFaila) {
         try {
+            auto pradzia = std::chrono::steady_clock::now();
+
             std::ifstream failas(pavadinimas);
 
             if (!failas.is_open()) {
@@ -97,6 +109,16 @@ int main() {
                 studentas A(vardas, pavarde, pazymiai, egzaminas);
                 grupe.push_back(A);
             }
+
+            //failo nuskaitymo laiko matavimo pabaiga
+            failas.close();
+
+            auto pabaiga = std::chrono::steady_clock::now();
+            std::chrono::duration<double> trukme = pabaiga - pradzia;
+
+            cout << "Duomenu nuskaitymas: "
+                << trukme.count() << " s\n";
+            cout << "Nuskaityta studentu: " << grupe.size() << "\n";
         }
         catch (const std::exception& e) {
             cout << "Klaida: " << e.what() << "\n";
@@ -107,10 +129,13 @@ int main() {
    
     std::sort(grupe.begin(), grupe.end(), vardid);
 
-    //suskirstymas į <5 (vargšiukai) ir >=5 (kietiakai)
+    // Skirstome pagal galutini bala, apskaiciuota naudojant ND vidurki:
+    // vargsiukai < 5, kietiakai >= 5. Matuojame skirstymo trukme.
 
     vector<studentas> vargsiukai;
     vector<studentas> kietiakai;
+
+    auto skirstymoPradzia = std::chrono::steady_clock::now();
 
     for (const studentas& A : grupe) {
         if (A.vidurkis() < 5.0) {
@@ -121,8 +146,35 @@ int main() {
         }
     }
 
+    auto skirstymoPabaiga = std::chrono::steady_clock::now();
+    std::chrono::duration<double> skirstymoTrukme =
+        skirstymoPabaiga - skirstymoPradzia;
+
+    cout << "Skirstymas i grupes: "
+        << skirstymoTrukme.count() << " s\n";
+
+    // Kiekviena grupe rikiuojama galutinio balo didėjimo tvarka
+    std::sort(vargsiukai.begin(), vargsiukai.end(),
+        [](const studentas& A, const studentas& B) {
+            return A.vidurkis() < B.vidurkis();
+        });
+
+    std::sort(kietiakai.begin(), kietiakai.end(),
+        [](const studentas& A, const studentas& B) {
+            return A.vidurkis() < B.vidurkis();
+        });
+
+
+    //isvedimas į failus, išvedimo laiko matavimas
+    auto isvedimoPradzia = std::chrono::steady_clock::now();
+
     std::ofstream silpni("vargsiukai.txt");
     std::ofstream stiprus("kietiakai.txt");
+
+    if (!silpni.is_open() || !stiprus.is_open()) {
+        cout << "Klaida: nepavyko sukurti rezultatu failu.\n";
+        return 1;
+    }
 
     silpni << left << setw(15) << "Vardas"
         << setw(23) << "Pavarde"
@@ -140,7 +192,34 @@ int main() {
 
     for (const studentas& A : kietiakai) {
         stiprus << A;
+    } // Ciklas baigiasi cia
+
+    // Uzdarome failus, kai visi studentai jau irasyti
+    silpni.close();
+    stiprus.close();
+
+    if (!silpni || !stiprus) {
+        cout << "Klaida: nepavyko irasyti rezultatu.\n";
+        return 1;
     }
+
+    // Isvedimo i failus laiko matavimo pabaiga
+    auto isvedimoPabaiga = std::chrono::steady_clock::now();
+    std::chrono::duration<double> isvedimoTrukme =
+        isvedimoPabaiga - isvedimoPradzia;
+
+    cout << "Isvedimas i du failus: "
+        << isvedimoTrukme.count() << " s\n";
+
+    cout << "Vargsiuku: " << vargsiukai.size() << "\n";
+    cout << "Kietiaku: " << kietiakai.size() << "\n";
+    
+
+    /*
+    
+    // Spartos bandymu metu studentu saraso i ekrana neisvedame,
+    // nes didelio kiekio eiluciu spausdinimas ilgina programos veikima.
+    // Studentu rezultatai irasomi i vargsiukai.txt ir kietiakai.txt.
 
     //Išvedimas
 
@@ -153,4 +232,5 @@ int main() {
 
     for (auto K : grupe)
         cout << K;
+    */
 }
