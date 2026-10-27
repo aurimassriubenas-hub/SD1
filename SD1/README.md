@@ -15,9 +15,12 @@ Galutinis balas = 0,4 × namų darbų rezultatas + 0,6 × egzaminas
 ## Versijų būsena
 
 - `v0.1` – užbaigta ir paskelbtas „Release“.
-- `v0.2` – įgyvendintas failų generavimas, studentų skirstymas
-  ir atlikti `vector`, `list` bei `deque` spartos bandymai.
-  Ruošiamas versijos išleidimas.
+- `v0.2` – užbaigta ir paskelbtas „Release“. Atlikti failų
+  generavimo, studentų skirstymo ir trijų konteinerių spartos bandymai.
+- `v1.0` – kuriama. Atlikti pirmosios strategijos spartos
+  ir atminties bandymai su `vector`, `list` ir `deque`.
+  Toliau palyginsiu antrąją strategiją ir išbandysiu
+  vektoriaus skirstymo optimizavimą.
 
 ## v0.1 – pagrindinės programos kūrimas
 
@@ -148,7 +151,7 @@ neparodo visos programos veikimo trukmės.
 Kadangi kiekvienam dydžiui atliktas vienas bandymas,
 pateikti rezultatai nėra kelių bandymų vidurkiai.
 
-## Konteinerių spartos palyginimas
+## v0.2 – konteinerių spartos palyginimas
 
 Palyginau `std::vector`, `std::list` ir `std::deque`.
 Visiems konteineriams naudojau tuos pačius penkis `bb` failus.
@@ -199,8 +202,8 @@ Didesnių failų nuskaitymo trukmės buvo panašios.
 naudojant `list` – 54,0342 s.
 
 Skirstant studentus, `list` šiame bandyme buvo greičiausias
-keturiems iš penkių dydžių. Su 10 milijonų studentų skirstymas
-užtruko 2,07686 s, naudojant `deque` – 2,73662 s,
+visiems penkiems failų dydžiams. Su 10 milijonų studentų
+skirstymas užtruko 2,07686 s, naudojant `deque` – 2,73662 s,
 o `vector` – 5,25218 s.
 
 Išvedimo rezultatai neparodė vieno konteinerio pranašumo
@@ -213,6 +216,91 @@ Kadangi atlikta tik po vieną bandymą, vien iš šių matavimų
 negalima nustatyti skirtumo priežasties ar teigti,
 kad vienas konteineris visais atvejais yra greičiausias.
 
+## v1.0 – pirmosios strategijos spartos ir atminties bandymai
+
+Atmintį matavau funkcija `AtmintisMiB()`, kuri naudoja
+„Windows“ funkciją `GetProcessMemoryInfo`. Gautą privačios
+atminties kiekį baitais perskaičiavau į MiB.
+
+Studentus skirsčiau į du naujus to paties tipo konteinerius:
+„vargšiukų“ ir „kietiakų“. Pradinis studentų konteineris
+liko nepakeistas, todėl kiekvieno studento duomenys buvo
+saugomi du kartus.
+
+Bandymams naudojau tuos pačius penkis duomenų failus,
+„Release x64“ konfigūraciją ir tris konteinerių tipus:
+`std::vector`, `std::list` ir `std::deque`.
+Namų darbų pažymiai visais atvejais liko `std::vector<int>`.
+
+Skirstymo trukmę matavau sekundėmis. Papildomas rikiavimas
+pagal vardą ir galutinį balą į šią trukmę neįtrauktas.
+
+Programos privačią atmintį matavau prieš skirstymą ir
+iškart po jo. Matavimai apima visą programą, todėl tai
+nėra tikslus vien konteinerių dydis ar didžiausias atminties
+naudojimas skirstymo metu. Atminties pokytis – skirtumas
+tarp reikšmių po skirstymo ir prieš jį.
+
+Kiekvienam failo dydžiui ir konteineriui atlikau po vieną bandymą.
+Atmintis pateikta MiB vienetais: 1 MiB = 1 048 576 baitai.
+
+### std::vector rezultatai
+
+|Studentų skaičius | Skirstymas, s | Atmintis prieš, MiB | Atmintis po, MiB | Pokytis, MiB |
+|-----------------:|--------------:|-------------------:|----------------:|-------------:|
+|            1 000 |     0,0008398 |           0,835938 |        0,957031 |     0,121094 |
+|           10 000 |     0,0052363 |            2,45312 |         4,43359 |      1,98047 |
+|          100 000 |     0,0545112 |            19,2266 |         37,8203 |      18,5938 |
+|        1 000 000 |      0,499558 |            151,766 |         320,465 |      168,699 |
+|       10 000 000 |       5,44967 |            1657,89 |          3573,6 |      1915,71 |
+
+### std::list rezultatai
+
+|Studentų skaičius | Skirstymas, s | Atmintis prieš, MiB | Atmintis po, MiB | Pokytis, MiB |
+|-----------------:|--------------:|-------------------:|----------------:|-------------:|
+|            1 000 |     0,0002489 |           0,792969 |        0,957031 |     0,164062 |
+|           10 000 |     0,0023179 |            2,32812 |         4,13672 |      1,80859 |
+|          100 000 |     0,0199879 |            17,6523 |         34,7891 |      17,1367 |
+|        1 000 000 |      0,216933 |            170,902 |         341,273 |      170,371 |
+|       10 000 000 |       2,55257 |             1703,4 |            3406 |       1702,6 |
+
+### std::deque rezultatai
+
+|Studentų skaičius | Skirstymas, s | Atmintis prieš, MiB | Atmintis po, MiB | Pokytis, MiB |
+|-----------------:|--------------:|-------------------:|----------------:|-------------:|
+|            1 000 |     0,0002364 |           0,785156 |        0,945312 |     0,160156 |
+|           10 000 |     0,0024908 |            2,33203 |         3,99219 |      1,66016 |
+|          100 000 |      0,023432 |            17,7109 |         33,8594 |      16,1484 |
+|        1 000 000 |      0,251424 |             163,59 |         339,797 |      176,207 |
+|       10 000 000 |       4,36682 |            1677,88 |         3336,36 |      1658,48 |
+
+### Konteinerių palyginimas su 10 milijonų studentų
+
+| Konteineris   | Skirstymas, s |Atmintis prieš, MiB | Atmintis po, MiB | Pokytis, MiB |
+|---------------|--------------:|-------------------:|----------------:|-------------:|
+| `std::vector` |       5,44967 |            1657,89 |          3573,6 |      1915,71 |
+| `std::list`   |       2,55257 |             1703,4 |            3406 |       1702,6 |
+| `std::deque`  |       4,36682 |            1677,88 |         3336,36 |      1658,48 |
+
+### Rezultatų aptarimas
+
+Po skirstymo atminties naudojimas padidėjo su visais trimis
+konteineriais, nes pradinis sąrašas išliko, o studentų
+kopijos buvo įrašytos į du naujus konteinerius.
+
+Su 10 milijonų studentų greičiausiai skirstė `list` –
+2,55257 s. `deque` užtruko 4,36682 s, o `vector` – 5,44967 s.
+
+Šiame didžiausiame bandyme mažiausia privati atmintis po
+skirstymo buvo naudojant `deque` – 3336,36 MiB.
+Didžiausia buvo naudojant `vector` – 3573,6 MiB.
+
+Kadangi kiekvienu atveju atlikau po vieną bandymą,
+šios išvados taikomos pateiktiems matavimams.
+Antrosios strategijos ir optimizuoto vektoriaus bandymai
+dar neatlikti.
+
+
 ## Projekto failai
 
 - `lib.h` – naudojamos bibliotekos ir `using` deklaracijos.
@@ -223,6 +311,9 @@ kad vienas konteineris visais atvejais yra greičiausias.
 - `Failai.cpp` – failo generavimo funkcijos realizacija.
 - `kursiokai.txt` – pavyzdinis studentų duomenų failas.
 - `README.md` – programos, jos naudojimo ir bandymų aprašymas.
+- `Matavimai.h` – atminties matavimo funkcijos deklaracija.
+- `Matavimai.cpp` – atminties matavimo funkcijos realizacija,
+  naudojanti „Windows“ funkcijas.
 
 Dideli sugeneruoti duomenų failai į repozitoriją nekeliami.
 Juos galima sukurti paleidus programą.
@@ -232,6 +323,10 @@ Juos galima sukurti paleidus programą.
 1. Atidaryti projektą „Visual Studio“.
 2. Pasirinkti „Release“ ir „x64“ konfigūraciją.
 3. Paspausti `Ctrl + F5`.
+
+Atminties matavimas šiuo metu pritaikytas „Windows“ sistemai.
+Ekrane taip pat parodoma programos privati atmintis prieš
+studentų skirstymą, po jo ir šių reikšmių skirtumas.
 
 ### Naujo studentų failo generavimas
 
@@ -258,8 +353,8 @@ Pirmoji eilutė skirta antraštei.
 
 ### Konteinerio pakeitimas bandymams
 
-Dabartiniame kode naudojamas `std::vector`.
-Norint išbandyti kitą konteinerį, `StudDB.cpp` faile reikia
+Studentų saugojimui naudojamas konteineris pasirenkamas
+`StudDB.cpp` faile. Norint išbandyti kitą konteinerį, reikia
 pakeisti visų trijų studentų konteinerių – `grupe`,
 `vargsiukai` ir `kietiakai` – tipą.
 

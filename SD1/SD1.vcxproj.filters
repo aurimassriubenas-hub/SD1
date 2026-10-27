@@ -27,6 +27,9 @@
     <ClCompile Include="Failai.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Matavimai.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Studentas.h">
@@ -36,6 +39,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Failai.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Matavimai.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

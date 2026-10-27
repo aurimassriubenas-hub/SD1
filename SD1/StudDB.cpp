@@ -1,11 +1,12 @@
 #include "lib.h"
 #include "Studentas.h"
 #include "Failai.h"
+#include "Matavimai.h"
 
 int main() {
-    vector<studentas> grupe;
-//  std::list<studentas> grupe;
-//  std::deque<studentas> grupe;
+//  vector<studentas> grupe;
+//   std::list<studentas> grupe;
+  std::deque<studentas> grupe;
     char uzkl;
     string pavadinimas;
     bool skaitytiFaila = false;
@@ -72,6 +73,7 @@ int main() {
         }
     }
 
+
     // Skaitome faila ir matuojame nuskaitymo trukme
     if (skaitytiFaila) {
         try {
@@ -128,23 +130,24 @@ int main() {
         }
     }
 
-   
-//  std::sort(grupe.begin(), grupe.end(), vardid);
-
-//  grupe.sort(vardid);
+      
+//   grupe.sort(vardid);
     std::sort(grupe.begin(), grupe.end(), vardid);
 
     // Skirstome pagal galutini bala, apskaiciuota naudojant ND vidurki:
     // vargsiukai < 5, kietiakai >= 5. Matuojame skirstymo trukme.
 
-    vector<studentas> vargsiukai;
-    vector<studentas> kietiakai;
+//  vector<studentas> vargsiukai;
+//  vector<studentas> kietiakai;
 
-//  std::list<studentas> vargsiukai;
-//  std::list<studentas> kietiakai;
+//   std::list<studentas> vargsiukai;
+//   std::list<studentas> kietiakai;
 
-//  std::deque<studentas> vargsiukai;
-//  std::deque<studentas> kietiakai;
+  std::deque<studentas> vargsiukai;
+  std::deque<studentas> kietiakai;
+
+    // Atminties kiekis prieš studentų skirstymą.
+    double atmintisPries = AtmintisMiB();
 
     auto skirstymoPradzia = std::chrono::steady_clock::now();
 
@@ -156,8 +159,12 @@ int main() {
             kietiakai.push_back(A);
         }
     }
-
+    // Užfiksuojame skirstymo pabaigos laiką.
     auto skirstymoPabaiga = std::chrono::steady_clock::now();
+
+    // Abi grupės užpildytos, o bendras grupe konteineris išlikęs.
+    double atmintisPo = AtmintisMiB();
+
     std::chrono::duration<double> skirstymoTrukme =
         skirstymoPabaiga - skirstymoPradzia;
 
@@ -171,14 +178,24 @@ int main() {
             return A.vidurkis() < B.vidurkis();
         });
 
-
+//  Vargšiukus rikiuojame pagal galutinį balą didėjimo tvarka.
+/*    vargsiukai.sort(
+        [](const studentas& A, const studentas& B) {
+            return A.vidurkis() < B.vidurkis();
+        });
+*/
 //  kietiakai.sort(
-    std::sort(kietiakai.begin(), kietiakai.end(),
+   std::sort(kietiakai.begin(), kietiakai.end(),
         [](const studentas& A, const studentas& B) {
             return A.vidurkis() < B.vidurkis();
         });
 
-
+//  Kietiakus rikiuojame pagal galutinį balą didėjimo tvarka.
+/*    kietiakai.sort(
+        [](const studentas& A, const studentas& B) {
+            return A.vidurkis() < B.vidurkis();
+        });
+*/
     //isvedimas į failus, išvedimo laiko matavimas
     auto isvedimoPradzia = std::chrono::steady_clock::now();
 
@@ -222,12 +239,24 @@ int main() {
     std::chrono::duration<double> isvedimoTrukme =
         isvedimoPabaiga - isvedimoPradzia;
 
+
     cout << "Isvedimas i du failus: "
         << isvedimoTrukme.count() << " s\n";
 
     cout << "Vargsiuku: " << vargsiukai.size() << "\n";
     cout << "Kietiaku: " << kietiakai.size() << "\n";
     
+    // Parodome programos privačios atminties kiekį prieš skirstymą.
+    cout << "Privati atmintis pries skirstyma: "
+        << atmintisPries << " MiB\n";
+
+    // Parodome programos privačios atminties kiekį po skirstymo.
+    cout << "Privati atmintis po skirstymo: "
+        << atmintisPo << " MiB\n";
+
+    // Apskaičiuojame, kiek pasikeitė atminties naudojimas.
+    cout << "Atminties pokytis: "
+        << atmintisPo - atmintisPries << " MiB\n";
 
     /*
     
