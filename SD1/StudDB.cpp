@@ -4,8 +4,8 @@
 #include "Matavimai.h"
 
 int main() {
-//  vector<studentas> grupe;
-//   std::list<studentas> grupe;
+  //  vector<studentas> grupe;
+  //   std::list<studentas> grupe;
   std::deque<studentas> grupe;
     char uzkl;
     string pavadinimas;
@@ -131,38 +131,64 @@ int main() {
     }
 
       
-//   grupe.sort(vardid);
-    std::sort(grupe.begin(), grupe.end(), vardid);
+ //  grupe.sort(vardid);
+   std::sort(grupe.begin(), grupe.end(), vardid);
 
     // Skirstome pagal galutini bala, apskaiciuota naudojant ND vidurki:
     // vargsiukai < 5, kietiakai >= 5. Matuojame skirstymo trukme.
 
-//  vector<studentas> vargsiukai;
-//  vector<studentas> kietiakai;
-
+//    vector<studentas> vargsiukai;
+    
 //   std::list<studentas> vargsiukai;
-//   std::list<studentas> kietiakai;
 
   std::deque<studentas> vargsiukai;
-  std::deque<studentas> kietiakai;
+
 
     // Atminties kiekis prieš studentų skirstymą.
     double atmintisPries = AtmintisMiB();
 
     auto skirstymoPradzia = std::chrono::steady_clock::now();
 
-    for (const studentas& A : grupe) {
-        if (A.vidurkis() < 5.0) {
-            vargsiukai.push_back(A);
+    int liko = 0; // Kiek kietiaku paliekame grupeje.
+
+    for (int i = 0; i < grupe.size(); i++) {
+        if (grupe[i].vidurkis() < 5.0) {
+            vargsiukai.push_back(grupe[i]);
         }
         else {
-            kietiakai.push_back(A);
+            // Kietiaka irasome i laisva vieta pradzioje.
+            if (liko != i) {
+                grupe[liko] = grupe[i];
+            }
+
+            liko++;
         }
     }
+    // Pasaliname nereikalinga konteinerio gala.
+    grupe.erase(grupe.begin() + liko, grupe.end());
+
+    // Pradedame nuo pirmo studento.
+ /*   auto it = grupe.begin();
+
+    while (it != grupe.end()) {
+        if (it->vidurkis() < 5.0) {
+            // Nukopijuojame vargsiuka i atskira sarasa.
+            vargsiukai.push_back(*it);
+
+            // Pasaliname ji is grupes ir gauname kita pozicija.
+            it = grupe.erase(it);
+        }
+        else {
+            // Kietiaka paliekame ir pereiname prie kito studento.
+            ++it;
+        }
+    }
+*/
+
     // Užfiksuojame skirstymo pabaigos laiką.
     auto skirstymoPabaiga = std::chrono::steady_clock::now();
 
-    // Abi grupės užpildytos, o bendras grupe konteineris išlikęs.
+    // Vargsiukai atskirame konteineryje, grupeje liko tik kietiakai.
     double atmintisPo = AtmintisMiB();
 
     std::chrono::duration<double> skirstymoTrukme =
@@ -178,24 +204,27 @@ int main() {
             return A.vidurkis() < B.vidurkis();
         });
 
+
 //  Vargšiukus rikiuojame pagal galutinį balą didėjimo tvarka.
 /*    vargsiukai.sort(
         [](const studentas& A, const studentas& B) {
             return A.vidurkis() < B.vidurkis();
         });
+
 */
-//  kietiakai.sort(
-   std::sort(kietiakai.begin(), kietiakai.end(),
+// Po skirstymo grupeje liko tik kietiakai.
+    std::sort(grupe.begin(), grupe.end(),
         [](const studentas& A, const studentas& B) {
             return A.vidurkis() < B.vidurkis();
         });
 
 //  Kietiakus rikiuojame pagal galutinį balą didėjimo tvarka.
-/*    kietiakai.sort(
+/*    grupe.sort(
         [](const studentas& A, const studentas& B) {
             return A.vidurkis() < B.vidurkis();
         });
 */
+
     //isvedimas į failus, išvedimo laiko matavimas
     auto isvedimoPradzia = std::chrono::steady_clock::now();
 
@@ -221,8 +250,9 @@ int main() {
         silpni << A;
     }
 
-    for (const studentas& A : kietiakai) {
+    for (const studentas& A : grupe) {
         stiprus << A;
+    
     } // Ciklas baigiasi cia
 
     // Uzdarome failus, kai visi studentai jau irasyti
@@ -244,7 +274,7 @@ int main() {
         << isvedimoTrukme.count() << " s\n";
 
     cout << "Vargsiuku: " << vargsiukai.size() << "\n";
-    cout << "Kietiaku: " << kietiakai.size() << "\n";
+    cout << "Kietiaku: " << grupe.size() << "\n";
     
     // Parodome programos privačios atminties kiekį prieš skirstymą.
     cout << "Privati atmintis pries skirstyma: "
@@ -257,6 +287,7 @@ int main() {
     // Apskaičiuojame, kiek pasikeitė atminties naudojimas.
     cout << "Atminties pokytis: "
         << atmintisPo - atmintisPries << " MiB\n";
+
 
     /*
     
