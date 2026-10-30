@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Studentas.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -50,5 +47,6 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="kursiokai.txt" />
+    <Text Include="CMakeLists.txt" />
   </ItemGroup>
 </Project>

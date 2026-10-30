@@ -18,8 +18,9 @@ Galutinis balas = 0,4 × namų darbų rezultatas + 0,6 × egzaminas
 - `v0.2` – užbaigta ir paskelbtas „Release“. Atlikti failų
   generavimo, studentų skirstymo ir trijų konteinerių spartos bandymai.
 - `v1.0` – kuriama. Atlikti abiejų strategijų spartos ir atminties
-  bandymai su `vector`, `list` ir `deque`. Toliau išbandysiu
-  pasirinktus standartinius algoritmus vektoriaus skirstymui.
+  bandymai su `vector`, `list` ir `deque`. Su vektoriumi išbandyti
+  `std::partition` ir `std::stable_partition` algoritmai,
+  jų sparta palyginta su paprastu ciklu.
 
 
 ## v0.1 – pagrindinės programos kūrimas
@@ -410,8 +411,105 @@ Rezultatams įtakos turi ir konteineris, ir pasirinktas skirstymo
 būdas. Kadangi atlikau po vieną bandymą, šios išvados taikomos
 pateiktiems matavimams.
 
-Vektoriaus bandymai su pasirinktais standartiniais algoritmais
-dar neatlikti.
+## v1.0 – vektoriaus skirstymas su std::partition
+
+Išbandžiau `std::partition` algoritmą su `std::vector`.
+Jis studentus, kurių galutinis balas yra ne mažesnis nei 5,
+sudeda į vektoriaus pradžią, o likusius – į galą.
+Galutinis balas apskaičiuojamas iš namų darbų vidurkio
+ir egzamino pažymio.
+
+Vargšiukus nukopijavau į atskirą vektorių ir pašalinau
+iš bendros grupės. Joje liko tik kietiakai.
+
+Rezultatus palyginau su antrosios strategijos ciklu,
+kuriame kietiakai surašomi į vektoriaus pradžią,
+o nereikalingas galas pašalinamas vienu `erase`.
+
+Abiem variantams naudojau tuos pačius penkis `bb` failus
+ir „Release x64“ konfigūraciją. Matuojama visa skirstymo
+procedūra, įskaitant kopijavimą ir pašalinimą.
+Papildomas rikiavimas į šias trukmes neįtrauktas.
+Kiekvienam dydžiui ir variantui atlikau po vieną bandymą.
+
+### Skirstymo trukmių palyginimas
+
+|Studentų skaičius |Paprastas ciklas, s |std::partition variantas, s |
+|-----------------:|-------------------:|---------------------------:|
+|            1 000 |          0,0004452 |                  0,0002091 |
+|           10 000 |          0,0024759 |                  0,0027386 |
+|          100 000 |          0,0311609 |                  0,0294762 |
+|        1 000 000 |           0,244024 |                   0,249987 |
+|       10 000 000 |            2,65827 |                     2,7883 |
+
+### Rezultatų aptarimas
+
+Abu variantai studentus suskirstė į tokio pat dydžio grupes.
+Tačiau `std::partition` naudojimas nepaspartino skirstymo
+visais atvejais.
+
+Su 10 milijonų studentų paprastas ciklas užtruko 2,65827 s,
+o variantas su `std::partition` – 2,7883 s, arba apie 5 % ilgiau.
+Su 1 000 ir 100 000 studentų greitesnis buvo
+`std::partition` variantas.
+
+Šie bandymai neparodė aiškaus `std::partition` pranašumo
+prieš jau turėtą ciklą. Kadangi kiekvienam dydžiui atlikau
+po vieną bandymą, nedideli trukmių skirtumai dar neįrodo,
+kad vienas variantas nuolat veikia greičiau.
+
+## v1.0 – vektoriaus skirstymas su std::stable_partition
+
+Papildomai išbandžiau `std::stable_partition`.
+Jis, kaip ir `std::partition`, kietiakus sudeda į vektoriaus
+pradžią, o vargšiukus – į galą. Skirtumas tas, kad kiekvienoje
+grupėje išlaikoma ankstesnė studentų tvarka.
+
+Po padalijimo vargšiukus nukopijavau į atskirą vektorių
+ir pašalinau iš `grupe`. Skirstymui naudojamas galutinis
+balas iš namų darbų vidurkio ir egzamino pažymio.
+
+Visus tris variantus bandžiau su tais pačiais penkiais `bb`
+failais, naudodamas „Release x64“ konfigūraciją.
+Matuojama visa skirstymo procedūra: studentų padalijimas,
+vargšiukų kopijavimas ir pašalinimas iš bendro konteinerio.
+Papildomas rikiavimas į šias trukmes neįtrauktas.
+
+### Trijų skirstymo variantų palyginimas
+
+Trukmės pateiktos sekundėmis. Kiekvienam dydžiui ir variantui
+atlikau po vieną bandymą.
+
+|Studentų skaičius |Paprastas ciklas, s | std::partition, s | std::stable_partition, s |
+|-----------------:|-------------------:|------------------:|-------------------------:|
+|            1 000 |          0,0004452 |         0,0002091 |                 0,000262 |
+|           10 000 |          0,0024759 |         0,0027386 |                0,0029629 |
+|          100 000 |          0,0311609 |         0,0294762 |                0,0345279 |
+|        1 000 000 |           0,244024 |          0,249987 |                 0,304289 |
+|       10 000 000 |            2,65827 |            2,7883 |                  3,31222 |
+
+### Rezultatų aptarimas
+
+Visi trys variantai studentus suskirstė į tokio pat dydžio
+grupes. Šiuose bandymuose `std::stable_partition` buvo
+lėčiausias visiems penkiems failų dydžiams.
+
+Su 10 milijonų studentų paprastas ciklas užtruko 2,65827 s,
+`std::partition` variantas – 2,7883 s, o
+`std::stable_partition` variantas – 3,31222 s.
+Pastarasis užtruko apie 25 % ilgiau už paprastą ciklą.
+
+Privati programos atmintis po didžiausio bandymo su
+`std::stable_partition` buvo 2229,21 MiB.
+Atmintį matavau pasibaigus skirstymui, todėl šis skaičius
+neparodo laikinos atminties maksimumo algoritmo vykdymo metu.
+
+Išbandyti standartiniai algoritmai aiškaus paspartėjimo,
+palyginti su turėtu ciklu, neparodė. Paprastas ciklas buvo
+greičiausias dviejuose didžiausiuose bandymuose.
+Kadangi atlikau po vieną bandymą, išvados taikomos šiems
+konkretiems matavimams.
+
 
 ## Projekto failai
 

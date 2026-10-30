@@ -4,9 +4,8 @@
 #include "Matavimai.h"
 
 int main() {
-  //  vector<studentas> grupe;
-  //   std::list<studentas> grupe;
-  std::deque<studentas> grupe;
+      vector<studentas> grupe;
+
     char uzkl;
     string pavadinimas;
     bool skaitytiFaila = false;
@@ -130,22 +129,25 @@ int main() {
         }
     }
 
-      
- //  grupe.sort(vardid);
+
+
    std::sort(grupe.begin(), grupe.end(), vardid);
 
-    // Skirstome pagal galutini bala, apskaiciuota naudojant ND vidurki:
-    // vargsiukai < 5, kietiakai >= 5. Matuojame skirstymo trukme.
+   // Skirstome pagal galutini bala: 40 % ND vidurkio ir 60 % egzamino.
+   // Vargsiukai < 5, kietiakai >= 5. Matuojame skirstymo trukme.
 
-//    vector<studentas> vargsiukai;
+    vector<studentas> vargsiukai;
     
-//   std::list<studentas> vargsiukai;
-
-  std::deque<studentas> vargsiukai;
-
-
     // Atminties kiekis prieš studentų skirstymą.
-    double atmintisPries = AtmintisMiB();
+    double atmintisPries;
+
+    try {
+        atmintisPries = AtmintisMiB();
+    }
+    catch (const std::exception& e) {
+        cout << "Klaida: " << e.what() << "\n";
+        return 1;
+    }
 
     auto skirstymoPradzia = std::chrono::steady_clock::now();
 
@@ -164,32 +166,24 @@ int main() {
             liko++;
         }
     }
-    // Pasaliname nereikalinga konteinerio gala.
+
+    // Pasaliname nereikalinga vektoriaus gala.
     grupe.erase(grupe.begin() + liko, grupe.end());
 
-    // Pradedame nuo pirmo studento.
- /*   auto it = grupe.begin();
 
-    while (it != grupe.end()) {
-        if (it->vidurkis() < 5.0) {
-            // Nukopijuojame vargsiuka i atskira sarasa.
-            vargsiukai.push_back(*it);
-
-            // Pasaliname ji is grupes ir gauname kita pozicija.
-            it = grupe.erase(it);
-        }
-        else {
-            // Kietiaka paliekame ir pereiname prie kito studento.
-            ++it;
-        }
-    }
-*/
-
-    // Užfiksuojame skirstymo pabaigos laiką.
     auto skirstymoPabaiga = std::chrono::steady_clock::now();
 
     // Vargsiukai atskirame konteineryje, grupeje liko tik kietiakai.
-    double atmintisPo = AtmintisMiB();
+    double atmintisPo;
+
+    try {
+        atmintisPo = AtmintisMiB();
+    }
+    catch (const std::exception& e) {
+        cout << "Klaida: " << e.what() << "\n";
+        return 1;
+    }
+
 
     std::chrono::duration<double> skirstymoTrukme =
         skirstymoPabaiga - skirstymoPradzia;
@@ -204,26 +198,11 @@ int main() {
             return A.vidurkis() < B.vidurkis();
         });
 
-
-//  Vargšiukus rikiuojame pagal galutinį balą didėjimo tvarka.
-/*    vargsiukai.sort(
-        [](const studentas& A, const studentas& B) {
-            return A.vidurkis() < B.vidurkis();
-        });
-
-*/
 // Po skirstymo grupeje liko tik kietiakai.
     std::sort(grupe.begin(), grupe.end(),
         [](const studentas& A, const studentas& B) {
             return A.vidurkis() < B.vidurkis();
         });
-
-//  Kietiakus rikiuojame pagal galutinį balą didėjimo tvarka.
-/*    grupe.sort(
-        [](const studentas& A, const studentas& B) {
-            return A.vidurkis() < B.vidurkis();
-        });
-*/
 
     //isvedimas į failus, išvedimo laiko matavimas
     auto isvedimoPradzia = std::chrono::steady_clock::now();
@@ -254,6 +233,7 @@ int main() {
         stiprus << A;
     
     } // Ciklas baigiasi cia
+
 
     // Uzdarome failus, kai visi studentai jau irasyti
     silpni.close();
@@ -288,23 +268,4 @@ int main() {
     cout << "Atminties pokytis: "
         << atmintisPo - atmintisPries << " MiB\n";
 
-
-    /*
-    
-    // Spartos bandymu metu studentu saraso i ekrana neisvedame,
-    // nes didelio kiekio eiluciu spausdinimas ilgina programos veikima.
-    // Studentu rezultatai irasomi i vargsiukai.txt ir kietiakai.txt.
-
-    //Išvedimas
-
-    cout << std::left << std::setw(15) << "Vardas"
-        << std::setw(23) << "Pavarde"
-        << std::left << std::setw(18) << "Galutinis (Med.) "
-        << std::setw(18) << "Galutinis (Vid.)" << "\n";
-
-    cout << "-------------------------------------------------------------------------\n";
-
-    for (auto K : grupe)
-        cout << K;
-    */
 }

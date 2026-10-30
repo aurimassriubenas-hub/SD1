@@ -140,7 +140,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Failai.cpp" />
-    <ClCompile Include="main.cpp" />
     <ClCompile Include="Matavimai.cpp" />
     <ClCompile Include="StudDB.cpp" />
     <ClCompile Include="Studentas.cpp" />
@@ -155,6 +154,7 @@
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="CMakeLists.txt" />
     <Text Include="kursiokai.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
