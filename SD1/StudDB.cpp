@@ -1,11 +1,11 @@
 #include "lib.h"
 #include "Studentas.h"
 #include "Failai.h"
+#include "Matavimai.h"
 
 int main() {
-    vector<studentas> grupe;
-//  std::list<studentas> grupe;
-//  std::deque<studentas> grupe;
+      vector<studentas> grupe;
+
     char uzkl;
     string pavadinimas;
     bool skaitytiFaila = false;
@@ -72,6 +72,7 @@ int main() {
         }
     }
 
+
     // Skaitome faila ir matuojame nuskaitymo trukme
     if (skaitytiFaila) {
         try {
@@ -128,36 +129,62 @@ int main() {
         }
     }
 
-   
-//  std::sort(grupe.begin(), grupe.end(), vardid);
 
-//  grupe.sort(vardid);
-    std::sort(grupe.begin(), grupe.end(), vardid);
 
-    // Skirstome pagal galutini bala, apskaiciuota naudojant ND vidurki:
-    // vargsiukai < 5, kietiakai >= 5. Matuojame skirstymo trukme.
+   std::sort(grupe.begin(), grupe.end(), vardid);
+
+   // Skirstome pagal galutini bala: 40 % ND vidurkio ir 60 % egzamino.
+   // Vargsiukai < 5, kietiakai >= 5. Matuojame skirstymo trukme.
 
     vector<studentas> vargsiukai;
-    vector<studentas> kietiakai;
+    
+    // Atminties kiekis prieš studentų skirstymą.
+    double atmintisPries;
 
-//  std::list<studentas> vargsiukai;
-//  std::list<studentas> kietiakai;
-
-//  std::deque<studentas> vargsiukai;
-//  std::deque<studentas> kietiakai;
+    try {
+        atmintisPries = AtmintisMiB();
+    }
+    catch (const std::exception& e) {
+        cout << "Klaida: " << e.what() << "\n";
+        return 1;
+    }
 
     auto skirstymoPradzia = std::chrono::steady_clock::now();
 
-    for (const studentas& A : grupe) {
-        if (A.vidurkis() < 5.0) {
-            vargsiukai.push_back(A);
+    int liko = 0; // Kiek kietiaku paliekame grupeje.
+
+    for (int i = 0; i < grupe.size(); i++) {
+        if (grupe[i].vidurkis() < 5.0) {
+            vargsiukai.push_back(grupe[i]);
         }
         else {
-            kietiakai.push_back(A);
+            // Kietiaka irasome i laisva vieta pradzioje.
+            if (liko != i) {
+                grupe[liko] = grupe[i];
+            }
+
+            liko++;
         }
     }
 
+    // Pasaliname nereikalinga vektoriaus gala.
+    grupe.erase(grupe.begin() + liko, grupe.end());
+
+
     auto skirstymoPabaiga = std::chrono::steady_clock::now();
+
+    // Vargsiukai atskirame konteineryje, grupeje liko tik kietiakai.
+    double atmintisPo;
+
+    try {
+        atmintisPo = AtmintisMiB();
+    }
+    catch (const std::exception& e) {
+        cout << "Klaida: " << e.what() << "\n";
+        return 1;
+    }
+
+
     std::chrono::duration<double> skirstymoTrukme =
         skirstymoPabaiga - skirstymoPradzia;
 
@@ -171,13 +198,11 @@ int main() {
             return A.vidurkis() < B.vidurkis();
         });
 
-
-//  kietiakai.sort(
-    std::sort(kietiakai.begin(), kietiakai.end(),
+// Po skirstymo grupeje liko tik kietiakai.
+    std::sort(grupe.begin(), grupe.end(),
         [](const studentas& A, const studentas& B) {
             return A.vidurkis() < B.vidurkis();
         });
-
 
     //isvedimas į failus, išvedimo laiko matavimas
     auto isvedimoPradzia = std::chrono::steady_clock::now();
@@ -204,9 +229,11 @@ int main() {
         silpni << A;
     }
 
-    for (const studentas& A : kietiakai) {
+    for (const studentas& A : grupe) {
         stiprus << A;
+    
     } // Ciklas baigiasi cia
+
 
     // Uzdarome failus, kai visi studentai jau irasyti
     silpni.close();
@@ -222,29 +249,23 @@ int main() {
     std::chrono::duration<double> isvedimoTrukme =
         isvedimoPabaiga - isvedimoPradzia;
 
+
     cout << "Isvedimas i du failus: "
         << isvedimoTrukme.count() << " s\n";
 
     cout << "Vargsiuku: " << vargsiukai.size() << "\n";
-    cout << "Kietiaku: " << kietiakai.size() << "\n";
+    cout << "Kietiaku: " << grupe.size() << "\n";
     
+    // Parodome programos privačios atminties kiekį prieš skirstymą.
+    cout << "Privati atmintis pries skirstyma: "
+        << atmintisPries << " MiB\n";
 
-    /*
-    
-    // Spartos bandymu metu studentu saraso i ekrana neisvedame,
-    // nes didelio kiekio eiluciu spausdinimas ilgina programos veikima.
-    // Studentu rezultatai irasomi i vargsiukai.txt ir kietiakai.txt.
+    // Parodome programos privačios atminties kiekį po skirstymo.
+    cout << "Privati atmintis po skirstymo: "
+        << atmintisPo << " MiB\n";
 
-    //Išvedimas
+    // Apskaičiuojame, kiek pasikeitė atminties naudojimas.
+    cout << "Atminties pokytis: "
+        << atmintisPo - atmintisPries << " MiB\n";
 
-    cout << std::left << std::setw(15) << "Vardas"
-        << std::setw(23) << "Pavarde"
-        << std::left << std::setw(18) << "Galutinis (Med.) "
-        << std::setw(18) << "Galutinis (Vid.)" << "\n";
-
-    cout << "-------------------------------------------------------------------------\n";
-
-    for (auto K : grupe)
-        cout << K;
-    */
 }

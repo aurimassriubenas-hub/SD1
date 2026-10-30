@@ -11,8 +11,8 @@
 #include <sstream> ////duomenų išskaidymui iš nuskaitytos eilutės
 #include <stdexcept> //standartiniai išimčių tipai
 #include <chrono> // Veiksmu trukmes matavimui
-#include <list> // pakeisti vektorių
-#include <deque> // pakeisti vektorių
+#include <list> // pakeisti vektorių į list
+#include <deque> // pakeisti vektorių į deque
 
 
 using std::cout;
