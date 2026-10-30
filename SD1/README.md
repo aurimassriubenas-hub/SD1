@@ -17,10 +17,11 @@ Galutinis balas = 0,4 × namų darbų rezultatas + 0,6 × egzaminas
 - `v0.1` – užbaigta ir paskelbtas „Release“.
 - `v0.2` – užbaigta ir paskelbtas „Release“. Atlikti failų
   generavimo, studentų skirstymo ir trijų konteinerių spartos bandymai.
-- `v1.0` – kuriama. Atlikti abiejų strategijų spartos ir atminties
-  bandymai su `vector`, `list` ir `deque`. Su vektoriumi išbandyti
-  `std::partition` ir `std::stable_partition` algoritmai,
-  jų sparta palyginta su paprastu ciklu.
+- `v1.0` – užbaigta ir paskelbtas „Release“. Palygintos dvi
+  studentų skirstymo strategijos su `vector`, `list` ir `deque`,
+  išmatuota skirstymo trukmė ir atminties naudojimas.
+  Su vektoriumi išbandyti `std::partition` ir
+  `std::stable_partition` algoritmai.
 
 
 ## v0.1 – pagrindinės programos kūrimas
@@ -202,9 +203,10 @@ Didesnių failų nuskaitymo trukmės buvo panašios.
 10 milijonų studentų faile trumpiausiai nuskaitymas užtruko
 naudojant `list` – 54,0342 s.
 
-Skirstant studentus, `list` šiame bandyme buvo greičiausias
-visiems penkiems failų dydžiams. Su 10 milijonų studentų
-skirstymas užtruko 2,07686 s, naudojant `deque` – 2,73662 s,
+Skirstant studentus, `list` buvo greičiausias keturiems iš
+penkių failų dydžių. Su 10 000 studentų šiek tiek greitesnis
+buvo `deque`. Su 10 milijonų studentų `list` skirstymas
+užtruko 2,07686 s, `deque` – 2,73662 s,
 o `vector` – 5,25218 s.
 
 Išvedimo rezultatai neparodė vieno konteinerio pranašumo
@@ -491,8 +493,9 @@ atlikau po vieną bandymą.
 ### Rezultatų aptarimas
 
 Visi trys variantai studentus suskirstė į tokio pat dydžio
-grupes. Šiuose bandymuose `std::stable_partition` buvo
-lėčiausias visiems penkiems failų dydžiams.
+grupes. `std::stable_partition` buvo lėčiausias keturiems iš
+penkių failų dydžių. Su 1 000 studentų jis veikė greičiau
+už paprastą ciklą, tačiau lėčiau už `std::partition`.
 
 Su 10 milijonų studentų paprastas ciklas užtruko 2,65827 s,
 `std::partition` variantas – 2,7883 s, o
@@ -524,6 +527,7 @@ konkretiems matavimams.
 - `Matavimai.h` – atminties matavimo funkcijos deklaracija.
 - `Matavimai.cpp` – atminties matavimo funkcijos realizacija,
   naudojanti „Windows“ funkcijas.
+- `CMakeLists.txt` – programos kompiliavimo nustatymai.
 
 Dideli sugeneruoti duomenų failai į repozitoriją nekeliami.
 Juos galima sukurti paleidus programą.
@@ -598,3 +602,35 @@ dešiniuoju pelės mygtuku ant projekto ir pasirinkus
 
 Kiekvieną kartą paleidus skirstymą, ankstesni
 `vargsiukai.txt` ir `kietiakai.txt` perrašomi.
+
+## Kompiliavimas su CMake („Windows“)
+
+Reikia „Visual Studio“ su C++ kūrimo įrankiais, „Windows SDK“,
+CMake ir Ninja. Dabartinė atminties matavimo funkcija naudoja
+„Windows“ funkcijas, todėl ši programos versija skirta „Windows“.
+
+1. Atsisiųsti ir išskleisti projekto kodą arba klonuoti repozitoriją.
+2. Atidaryti „x64 Native Tools Command Prompt for VS“.
+3. Pereiti į projekto aplanką `SD1`, kuriame yra
+   `CMakeLists.txt` ir `StudDB.cpp`.
+4. Paruošti „Release“ kompiliavimą:
+
+```text
+cmake -S . -B build-final -G Ninja -DCMAKE_BUILD_TYPE=Release
+```
+
+5. Sukompiliuoti programą:
+
+```text
+cmake --build build-final
+```
+
+6. Paleisti programą:
+
+```text
+.\build-final\SD1.exe
+```
+
+Duomenų failai skaitomi ir rezultatai kuriami tame aplanke,
+iš kurio paleidžiama programa. Kompiliavimo aplankas
+`build-final` į GitHub nekeliamas.
